@@ -153,6 +153,29 @@ open class Highlightr
         return returnString
     }
     
+    open func highlight1(_ code: String, as languageName: String? = nil, fastRender: Bool = true) -> String?
+    {
+        var ret: JSValue
+        if let languageName = languageName
+        {
+            ret = hljs.invokeMethod("highlight", withArguments: [languageName, code, ignoreIllegals])
+        }else
+        {
+            // language auto detection
+            ret = hljs.invokeMethod("highlightAuto", withArguments: [code])
+        }
+                
+        let res = ret.objectForKeyedSubscript("value")
+        guard var string = res!.toString() else
+        {
+            return nil
+        }
+                
+        string = "<style>"+theme.lightTheme+"</style><pre><code class=\"hljs\">"+string+"</code></pre>"
+        
+        return string
+    }
+    
     /**
      Returns a list of all the available themes.
      
